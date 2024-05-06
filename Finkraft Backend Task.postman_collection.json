@@ -1,0 +1,135 @@
+{
+	"info": {
+		"_postman_id": "e92bf0c5-a7d9-4bbf-8ac6-380f61d82bfb",
+		"name": "Finkraft Backend Task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15987424"
+	},
+	"item": [
+		{
+			"name": "Upload to Database",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/upload?files=C:\\Users\\gambh\\Documents\\FinKraft Backend Task\\sample_transactions_500_rows.csv",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"upload"
+					],
+					"query": [
+						{
+							"key": "files",
+							"value": "C:\\Users\\gambh\\Documents\\FinKraft Backend Task\\sample_transactions_500_rows.csv"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/transactions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Particular Transaction",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/transactions/TX10001",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"transactions",
+						"TX10001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Transaction",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"TransactionID\": \"TX10001\",\r\n    \"CustomerName\": \"Kush\",\r\n    \"TransactionDate\": \"2024-05-06\",\r\n    \"Amount\": 100.0,\r\n    \"Status\": \"Updated\",\r\n    \"InvoiceURL\": \"http://example.com/new-invoice.pdf\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/transactions/TX10001",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"transactions",
+						"TX10001"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Transaction",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/transactions/TX10001",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"transactions",
+						"TX10001"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

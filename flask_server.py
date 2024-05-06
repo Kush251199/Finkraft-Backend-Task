@@ -1,4 +1,6 @@
 import csv
+from io import TextIOWrapper
+from datetime import datetime
 from flask import Flask, request, jsonify
 from sqlalchemy import create_engine, Column, String, Date, Float
 from sqlalchemy.ext.declarative import declarative_base
@@ -6,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 
-engine = create_engine('postgresql://username:password@localhost/db_name')
+engine = create_engine('sqlite:///transactions.db', echo=True)
 Base = declarative_base()
 
 class Transaction(Base):
@@ -33,7 +35,8 @@ def upload_file():
         return 'No selected file'
 
     if file:
-        transactions = csv.DictReader(file)
+        text_stream = TextIOWrapper(file.stream, encoding='utf-8')
+        transactions = csv.DictReader(text_stream)
         session = Session()
         existing_ids = set()
         for row in transactions:
@@ -41,11 +44,12 @@ def upload_file():
             if transaction_id in existing_ids:
                 continue
             existing_ids.add(transaction_id)
+            transaction_date = datetime.strptime(row['TransactionDate'], '%Y-%m-%d').date()
             transaction = Transaction(
                 TransactionID=transaction_id,
                 CustomerName=row['CustomerName'],
-                TransactionDate=row['TransactionDate'],
-                Amount=row['Amount'],
+                TransactionDate=transaction_date,
+                Amount=float(row['Amount']),
                 Status=row['Status'],
                 InvoiceURL=row['InvoiceURL']
             )
@@ -91,6 +95,8 @@ def get_transaction(transaction_id):
     else:
         return jsonify({'error': 'Transaction not found'}), 404
 
+from datetime import datetime
+
 @app.route('/transactions/<transaction_id>', methods=['PUT'])
 def update_transaction(transaction_id):
     session = Session()
@@ -99,8 +105,12 @@ def update_transaction(transaction_id):
         return jsonify({'error': 'Transaction not found'}), 404
     
     data = request.json
+    
+    transaction_date_str = data.get('TransactionDate')
+    if transaction_date_str:
+        transaction_date = datetime.strptime(transaction_date_str, '%Y-%m-%d').date()
+        transaction.TransactionDate = transaction_date
     transaction.CustomerName = data.get('CustomerName', transaction.CustomerName)
-    transaction.TransactionDate = data.get('TransactionDate', transaction.TransactionDate)
     transaction.Amount = data.get('Amount', transaction.Amount)
     transaction.Status = data.get('Status', transaction.Status)
     transaction.InvoiceURL = data.get('InvoiceURL', transaction.InvoiceURL)
@@ -109,6 +119,7 @@ def update_transaction(transaction_id):
     session.close()
     
     return jsonify({'message': 'Transaction updated successfully'}), 200
+
 
 @app.route('/transactions/<transaction_id>', methods=['DELETE'])
 def delete_transaction(transaction_id):
